@@ -25,13 +25,63 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateExpression(String getExpressionString) {
-        System.out.println(getExpressionString);
-        mainExpression = mainExpression + getExpressionString;
-        expression.setText(mainExpression);
+        if (validation(getExpressionString)) {
+            mainExpression = mainExpression + getExpressionString;
+            expression.setText(mainExpression);
+        }
+    }
+
+    public Boolean validation(String getExpressionString) {
+        char getLastChar;
+        if ( mainExpression == "" ) {
+            switch (getExpressionString) {
+                case "+":
+                case "*":
+                case "!":
+                case "/":
+                case "%":
+                    return false;
+            }
+        } else {
+            StringBuffer bufferValue = new StringBuffer(mainExpression);
+            System.out.println(bufferValue.length());
+            if (mainExpression.length() > 1) {
+                getLastChar = bufferValue.charAt(bufferValue.length() - 1);
+                switch (getExpressionString) {
+                    case "+":
+                    case "*":
+                    case "!":
+                    case "/":
+                    case "%":
+                    case "-":
+                        if ("+".equals(Character.toString(getLastChar)) ||
+                                "*".equals(Character.toString(getLastChar)) ||
+                                "!".equals(Character.toString(getLastChar)) ||
+                                "/".equals(Character.toString(getLastChar)) ||
+                                "-".equals(Character.toString(getLastChar))
+                        ) {
+                            System.out.println(getLastChar);
+                            System.out.println(getExpressionString);
+                            return false;
+                        }
+                }
+
+            }
+        }
+        return true;
     }
 
     public void clearAll(View view) {
         mainExpression = "";
+        expression.setText("");
+        results.setText("0.0");
+    }
+
+    public void onDeleteClick(View view) {
+        StringBuffer bufferValue = new StringBuffer(mainExpression);
+        bufferValue.deleteCharAt(bufferValue.length() - 1);
+        mainExpression = bufferValue.toString();
+        expression.setText(mainExpression);
     }
 
     public void setPercentage(View view) {
@@ -99,9 +149,7 @@ public class MainActivity extends AppCompatActivity {
         updateExpression(".");
     }
 
-    public void onDeleteClick(View view) {
 
-    }
 
     public void onAdditionClick(View view) {
         updateExpression("+");
