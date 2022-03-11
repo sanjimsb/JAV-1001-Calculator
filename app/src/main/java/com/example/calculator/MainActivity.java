@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         if(!operator.isEmpty()) {
             if(operator.equals("!")) {
                 System.out.println(mainExpression);
-                String[] splitExpression = mainExpression.split("!");
+                String[] splitExpression = mainExpression.split(operator);
                 if(splitExpression.length > 1) {
                     getFactorial(Integer.parseInt(splitExpression[0]),Integer.parseInt(splitExpression[1]));
                 } else {
@@ -102,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
                 String[] splitExpression = mainExpression.split(regexValue);
                 if (splitExpression.length > 1) {
                     operation(Double.parseDouble(splitExpression[0]), Double.parseDouble(splitExpression[1]), operator);
+                } else {
+                    if(operator.equals("%")) {
+                        operation(Double.parseDouble(splitExpression[0]), Double.parseDouble("1"), operator);
+                    }
                 }
             }
         } else {
@@ -111,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void operation(double firstNum, double secondNum, String operator) {
         DecimalFormat df = new DecimalFormat("###.##");
-
         switch (operator) {
             case "+":
                 result = firstNum + secondNum;
@@ -162,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onFactorialClick(View view) {
-        updateExpression("!");
+//        updateExpression("!");
     }
 
     public void onSevenClick(View view) {

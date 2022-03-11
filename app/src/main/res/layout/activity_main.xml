@@ -279,10 +279,9 @@
                 android:layout_weight="1"
                 android:background="@color/white"
                 android:backgroundTint="#FFAAA7A7"
-                app:backgroundTint="#FFAAA7A7"
-                android:text="p"
                 android:onClick="onDeleteClick"
-                />
+                app:backgroundTint="#FFAAA7A7"
+                app:icon="@android:drawable/ic_input_delete" />
 
             <Button
                 android:layout_width="0dp"
