@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import java.text.DecimalFormat;
 
 import org.w3c.dom.Text;
 
@@ -12,6 +13,9 @@ public class MainActivity extends AppCompatActivity {
     TextView expression;
     TextView results;
     String mainExpression = "";
+    String operator = "";
+    double result = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             StringBuffer bufferValue = new StringBuffer(mainExpression);
             System.out.println(bufferValue.length());
-            if (mainExpression.length() > 1) {
+            if (mainExpression.length() >= 1) {
                 getLastChar = bufferValue.charAt(bufferValue.length() - 1);
                 switch (getExpressionString) {
                     case "+":
@@ -54,15 +58,18 @@ public class MainActivity extends AppCompatActivity {
                     case "/":
                     case "%":
                     case "-":
-                        if ("+".equals(Character.toString(getLastChar)) ||
-                                "*".equals(Character.toString(getLastChar)) ||
-                                "!".equals(Character.toString(getLastChar)) ||
-                                "/".equals(Character.toString(getLastChar)) ||
-                                "-".equals(Character.toString(getLastChar))
+                        if (bufferValue.indexOf("+") != -1 ||
+                                bufferValue.indexOf("*") != -1 ||
+                                bufferValue.indexOf("!") != -1 ||
+                                bufferValue.indexOf("/") != -1 ||
+                                bufferValue.indexOf("%") != -1 ||
+                                bufferValue.indexOf("-") != -1
                         ) {
                             System.out.println(getLastChar);
                             System.out.println(getExpressionString);
                             return false;
+                        } else {
+                            operator = getExpressionString;
                         }
                 }
 
@@ -77,11 +84,73 @@ public class MainActivity extends AppCompatActivity {
         results.setText("0.0");
     }
 
+    public void onResultsClick(View view) {
+        if(!operator.isEmpty()) {
+            if(operator.equals("!")) {
+                System.out.println(mainExpression);
+                String[] splitExpression = mainExpression.split("!");
+                if(splitExpression.length > 1) {
+                    getFactorial(Integer.parseInt(splitExpression[0]),Integer.parseInt(splitExpression[1]));
+                } else {
+                    getFactorial(Integer.parseInt(splitExpression[0]),1);
+                }
+
+            } else {
+                String regexValue = operator.equals("+") ? "\\+" :
+                        (operator.equals("*") ? "\\*" : operator);
+
+                String[] splitExpression = mainExpression.split(regexValue);
+                if (splitExpression.length > 1) {
+                    operation(Double.parseDouble(splitExpression[0]), Double.parseDouble(splitExpression[1]), operator);
+                }
+            }
+        } else {
+            results.setText(mainExpression);
+        }
+    }
+
+    public void operation(double firstNum, double secondNum, String operator) {
+        DecimalFormat df = new DecimalFormat("###.##");
+
+        switch (operator) {
+            case "+":
+                result = firstNum + secondNum;
+                break;
+            case "-":
+                result = firstNum - secondNum;
+                break;
+            case "/":
+                result = firstNum / secondNum;
+                break;
+            case "*":
+                result = firstNum * secondNum;
+                break;
+            case "%":
+                result = (firstNum / 100) * secondNum;
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + operator);
+        }
+        System.out.println(result);
+        results.setText(df.format(result));
+    }
+
+    public void getFactorial(Integer firstNum, Integer secondNum) {
+        Integer setFactorial = 1;
+        for(Integer i=1; i<=firstNum; i++){
+            setFactorial = setFactorial * i;
+        }
+        results.setText(Integer.toString(setFactorial * secondNum));
+    }
+
     public void onDeleteClick(View view) {
-        StringBuffer bufferValue = new StringBuffer(mainExpression);
-        bufferValue.deleteCharAt(bufferValue.length() - 1);
-        mainExpression = bufferValue.toString();
-        expression.setText(mainExpression);
+        if(!mainExpression.isEmpty()) {
+            StringBuffer bufferValue = new StringBuffer(mainExpression);
+            bufferValue.deleteCharAt(bufferValue.length() - 1);
+            mainExpression = bufferValue.toString();
+            expression.setText(mainExpression);
+            results.setText("0.0");
+        }
     }
 
     public void setPercentage(View view) {
@@ -132,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
         updateExpression("3");
     }
 
-
     public void onMultiplyClick(View view) {
         updateExpression("*");
     }
@@ -149,13 +217,9 @@ public class MainActivity extends AppCompatActivity {
         updateExpression(".");
     }
 
-
-
     public void onAdditionClick(View view) {
         updateExpression("+");
     }
 
-    public void onResultsClick(View view) {
 
-    }
 }
